@@ -7,10 +7,14 @@ from shot import Shot
 
 def main():
   pygame.init()
+  pygame.mixer.init()
   print("Starting asteroids!")
   print(f"Screen width: {SCREEN_WIDTH}")
   print(f"Screen height: {SCREEN_HEIGHT}")
   screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+  collision_sound = pygame.mixer.Sound("thud-291047.mp3")
+  game_over_sound = pygame.mixer.Sound("game-over-arcade-6435.mp3")
 
   updatable = pygame.sprite.Group()
   drawable = pygame.sprite.Group()
@@ -38,18 +42,17 @@ def main():
 
     for asteroid in asteroids:
       if asteroid.collides_with(player):
+        game_over_sound.play()
+        pygame.time.wait(1000)
         print("Game over!")
         pygame.quit()
         return
       for asteroid2 in asteroids:
         if asteroid != asteroid2 and asteroid.collides_with(asteroid2):
-          # Rotate velocities to simulate a bounce
+          collision_sound.play()
           asteroid.velocity = asteroid.velocity.rotate(45)
           asteroid2.velocity = asteroid2.velocity.rotate(45)
-
-          # Move asteroids apart to prevent overlap
           move_distance = (asteroid.radius + asteroid2.radius) - (asteroid.position - asteroid2.position).length()
-
           asteroid.position += asteroid.velocity.normalize() * move_distance
           asteroid2.position += asteroid2.velocity.normalize() * move_distance
       for shot in shots:

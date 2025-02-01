@@ -3,6 +3,9 @@ from circleshape import CircleShape
 from constants import *
 from shot import Shot
 
+pygame.mixer.init()
+shot_sound = pygame.mixer.Sound("laser-45816.mp3")
+
 class Player(CircleShape):
   def __init__(self, x, y):
     super().__init__(x, y, PLAYER_RADIUS)
@@ -44,6 +47,7 @@ class Player(CircleShape):
       self.shoot()
 
   def shoot(self):
+    shot_sound.play()
     if self.shoot_timer > 0:
       return
     self.shoot_timer = PLAYER_SHOOT_COOLDOWN
